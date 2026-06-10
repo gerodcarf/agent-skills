@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "terminal-qa",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": ["~/src/terminal/qa-serve.sh"],
+      "port": 9878
+    }
+  ]
+}
