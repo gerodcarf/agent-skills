@@ -1,0 +1,10 @@
+# Querying Latency, Tokens, and Speed Results
+
+When analyzing the results of the `orchestrator-model-benchmark` (e.g. answering "which model was the fastest" or "how many tokens did it consume"):
+
+- **Do NOT** try to select `duration`, `latency`, `prompt_tokens`, or `completion_tokens` from the `benchmark.db` `runs` table. The SQLite schema natively tracks score metrics (`detection`, `restraint`, `accuracy`) but the token/duration columns in its views are hardcoded to `0` and not tracked natively.
+- **OmniRoute Direct Queries (Recommended for Tokens/Duration):** If the models were routed through OmniRoute (e.g. `managed_run.py omniroute <model_id>`), the absolute best way to check precise token usage (`tokens_in`, `tokens_out`, `tokens_cache_read`) and exact `duration` is to query OmniRoute's `call_logs` database directly:
+  `sqlite3 ~/OmniRoute/data/storage.sqlite "SELECT timestamp, requested_model, tokens_in, tokens_out, tokens_cache_read, duration FROM call_logs WHERE requested_model = '<model_id>' AND timestamp > '<start_time>';"`
+  *Note:* The background `managed_run.py` script uses a very minimal system prompt (bypassing `AGENTS.md` and tool schemas), so input tokens verified this way will appear drastically lower (e.g., ~10k total) compared to a full native Hermes orchestrator session (e.g., ~35k per turn) unless the model gets stuck in an accumulation loop. Focus on `tokens_cache_read` when evaluating context-caching efficiency across multi-turn scenarios.
+- **DO** use `hindsight_recall` or `session_search` directly to retrieve qualitative conclusions about which models were fastest or hit rate limits.
+- **DO** `grep` the markdown summary reports (`results/obsidian-report-*.md` or `results/report-*.md`) for terms like "fastest", "latency", or "speed" to find timing metrics that were recorded manually or via the summarizer script.
