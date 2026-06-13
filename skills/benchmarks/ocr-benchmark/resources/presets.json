@@ -1,0 +1,39 @@
+{
+  "canonical-25": {
+    "description": "Canonical 25-page benchmark corpus — balanced mix of charts, tables, graphics, scanned text, and watermarked pages. Pre-rasterized at 150 DPI in resources/pages/.",
+    "rasterized": true,
+    "pages_dir": "resources/pages",
+    "manifest": "resources/pages/manifest.json",
+    "sources": {
+      "statista-battery-minerals": {
+        "pdf_path": "Domains/Batteries/statista-global-battery-minerals-2026-03-14.pdf",
+        "pages": [1, 12, 13, 22, 24, 33, 34, 36, 41, 42]
+      },
+      "woodmac-solar": {
+        "pdf_path": "Domains/Batteries/WoodMac-US-ESM-Exec-Summary-2026-03-20.pdf",
+        "pages": [2, 5, 9, 12]
+      },
+      "sec-flash-crash": {
+        "pdf_path": "Investing/03-Case-Studies/Black-Swan-Events/SEC-Flash-Crash-Preliminary-Report.pdf",
+        "pages": [0, 1, 2]
+      },
+      "knight-risk-scanned": {
+        "pdf_path": "Investing/02-Frameworks/Knight-Risk-Uncertainty-Profit.pdf",
+        "pages": [2, 4, 5, 10]
+      },
+      "wucker-gray-rhino-scanned": {
+        "pdf_path": "Investing/01-Foundations/Wucker-The-Gray-Rhino.pdf",
+        "pages": [5, 6, 8, 10]
+      }
+    },
+    "categories": {
+      "chart": 5,
+      "table": 6,
+      "graphic": 4,
+      "mixed": 1,
+      "text": 1,
+      "scanned": 4,
+      "watermarked": 4
+    }
+  }
+}
