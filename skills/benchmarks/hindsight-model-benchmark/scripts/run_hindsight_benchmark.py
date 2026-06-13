@@ -428,7 +428,7 @@ def run_single_model(
 
     response_h2, usage_h2, latency_h2 = _call_with_retry(
         target, messages_h2, timeout=timeout, max_retries=max_retries,
-        max_tokens=1024,
+        max_tokens=max_output_tokens or 2048,
     )
 
     error_h2 = usage_h2.get("error", "")
