@@ -45,5 +45,24 @@
     ],
     "judge": "researcher",
     "description": "Fact-checking / devil's advocate — researcher judge flags contradictions"
+  },
+  "swarm_frontier": {
+    "panel": [
+      "worker-frontier1",
+      "worker-frontier2",
+      "worker-frontier3"
+    ],
+    "judge": "analyst",
+    "description": "Kanban Swarm: 3 Frontier workers (worker-frontier1, worker-frontier2, worker-frontier3)"
+  },
+  "swarm_cheap": {
+    "panel": [
+      "worker-cheap1",
+      "worker-cheap2",
+      "worker-cheap3",
+      "worker-cheap4"
+    ],
+    "judge": "analyst",
+    "description": "Kanban Swarm: 4 Budget workers (worker-cheap1, worker-cheap2, worker-cheap3, worker-cheap4)"
   }
 }

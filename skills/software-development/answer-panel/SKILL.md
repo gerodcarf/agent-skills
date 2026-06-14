@@ -3,11 +3,22 @@ name: answer-panel
 description: Fan-out reasoning panel — send a prompt to N models in parallel, then judge/synthesize into a single answer. Own your own "Fusion."
 version: 1.0.0
 category: software-development
+trigger:
+  - user explicitly requests to run a reasoning panel or uses the trigger "[fuse]"
+  - comparing multiple models on a single prompt or query
+  - fanning out a query to multiple parallel models or agent profiles
 ---
 
 # Answer Panel
 
 Send a prompt to multiple models in parallel, collect their responses, and use a judge model to synthesize them into a single best answer. Inspired by OpenRouter Fusion, but runs locally through OmniRoute with your own model selection and synthesis logic.
+
+## Trigger Protocol: `[fuse]`
+
+When the user includes `[fuse]` in their message, the Orchestrator routes the request here:
+- **Default Inline**: Runs a fast, parallel panel using the `default` preset via `panel.py` (low latency, text-only).
+- **Interactive Preset**: Pass `--preset <name>` on the CLI or specify the preset name (e.g. `[fuse] using budget preset: <prompt>`).
+- **Asynchronous Swarm**: Launches a full Kanban Swarm with parallel workers (`worker-frontier1-3` or `worker-cheap1-4`) using the `--preset swarm_frontier` or `--preset swarm_cheap` via `swarm.py`.
 
 ## When to Use
 
@@ -107,6 +118,8 @@ Named panel configurations in `scripts/presets.json`. Override or extend freely.
 | `frontier` | Claude Opus 4.7 + GPT-5.5 High + Grok 4.3 | jumbo | High | Max quality, money no object |
 | `diverse` | Claude Sonnet + Gemini + Grok + DeepSeek + Qwen | jumbo | Medium-High | Max diversity for hard problems |
 | `adversarial` | Gemini Pro (pro) + DeepSeek (skeptic) + Grok (realist) | researcher | Medium | Fact-checking, devil's advocate |
+| `swarm_frontier` | worker-frontier1, worker-frontier2, worker-frontier3 | analyst | High | Frontier Swarm: 3 active reasoning profiles |
+| `swarm_cheap` | worker-cheap1, worker-cheap2, worker-cheap3, worker-cheap4 | analyst | Low | Budget Swarm: 4 active cheap/open-source profiles |
 
 ## How It Works
 

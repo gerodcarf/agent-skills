@@ -81,11 +81,29 @@ def get_specialized_worker(profile: str, goal: str, priority: int) -> SwarmWorke
             priority=priority
         )
 
+
+def load_preset(name: str) -> dict:
+    """Load a named panel preset from presets.json."""
+    presets_path = Path(__file__).parent / "presets.json"
+    if not presets_path.exists():
+        print(f"Error: presets.json not found at {presets_path}", file=sys.stderr)
+        sys.exit(1)
+    with open(presets_path) as f:
+        presets = json.load(f)
+    if name not in presets:
+        available = ", ".join(sorted(presets.keys()))
+        print(f"Error: preset '{name}' not found. Available: {available}", file=sys.stderr)
+        sys.exit(1)
+    return presets[name]
+
+
 def main():
     parser = argparse.ArgumentParser(description="Spawn a Kanban Swarm to resolve a reasoning/research goal.")
     parser.add_argument("goal", help="The research goal or question to analyze.")
     parser.add_argument("--workers", default="scout,researcher,clerk", 
                         help="Comma-separated list of worker profiles (default: scout,researcher,clerk).")
+    parser.add_argument("--preset", default=None,
+                        help="Load worker list from a named preset in presets.json.")
     parser.add_argument("--verifier", default="reviewer", 
                         help="Profile to assign as verifier/gatekeeper (default: reviewer).")
     parser.add_argument("--synthesizer", default="analyst", 
@@ -104,7 +122,14 @@ def main():
         sys.exit(1)
 
     # Parse and build worker profiles
-    profiles_list = [p.strip() for p in args.workers.split(",") if p.strip()]
+    if args.preset:
+        preset_data = load_preset(args.preset)
+        profiles_list = preset_data["panel"]
+        if "judge" in preset_data:
+            args.synthesizer = preset_data["judge"]
+    else:
+        profiles_list = [p.strip() for p in args.workers.split(",") if p.strip()]
+
     if not profiles_list:
         print("Error: must provide at least one worker profile.", file=sys.stderr)
         sys.exit(1)
