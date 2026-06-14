@@ -1,0 +1,49 @@
+{
+  "default": {
+    "panel": [
+      "gemini-cli/gemini-3.1-pro-preview",
+      "openrouter/x-ai/grok-4.3",
+      "openrouter/deepseek/deepseek-v4-pro"
+    ],
+    "judge": "orchestrator",
+    "description": "General-purpose reasoning — Gemini Pro + Grok + DeepSeek, orchestrator judge"
+  },
+  "budget": {
+    "panel": [
+      "openrouter/deepseek/deepseek-v4-flash",
+      "openrouter/qwen/qwen3.6-plus",
+      "openrouter/x-ai/grok-4.20"
+    ],
+    "judge": "clerk",
+    "description": "Cost-sensitive — budget models, clerk judge. ~half the cost of default"
+  },
+  "frontier": {
+    "panel": [
+      "openrouter/anthropic/claude-opus-4.7",
+      "codex/gpt-5.5-high",
+      "openrouter/x-ai/grok-4.3"
+    ],
+    "judge": "jumbo",
+    "description": "Max quality — frontier models only, jumbo judge"
+  },
+  "diverse": {
+    "panel": [
+      "openrouter/anthropic/claude-sonnet-4.5",
+      "gemini-cli/gemini-3.1-pro-preview",
+      "openrouter/x-ai/grok-4.3",
+      "openrouter/deepseek/deepseek-v4-pro",
+      "openrouter/qwen/qwen3.6-plus"
+    ],
+    "judge": "jumbo",
+    "description": "Max diversity — 5 models across 5 labs for hard problems"
+  },
+  "adversarial": {
+    "panel": [
+      "gemini-cli/gemini-3.1-pro-preview",
+      "openrouter/deepseek/deepseek-v4-pro",
+      "openrouter/x-ai/grok-4.3"
+    ],
+    "judge": "researcher",
+    "description": "Fact-checking / devil's advocate — researcher judge flags contradictions"
+  }
+}
