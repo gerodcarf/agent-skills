@@ -77,7 +77,7 @@ def get_specialized_worker(profile: str, goal: str, priority: int) -> SwarmWorke
                 f"Swarm Goal:\n{goal}\n\n"
                 "Conduct research, outline your findings, and log your structured insights.\n\n"
                 "IMPORTANT: Save your full analysis as a markdown report to your workspace "
-                "using write_file (e.g., report.md). Post a summary to the blackboard via kanban_comment "
+                "using write_file to `report.md` (relative path). Post a summary to the blackboard via kanban_comment "
                 "on the root task with key findings. Do NOT only post to the blackboard — the written artifact is required."
             ),
             skills=[],  # Custom workers leverage their own profile default skills
@@ -145,6 +145,12 @@ def main():
         print(f"Error: Could not connect to Kanban SQLite database: {e}", file=sys.stderr)
         sys.exit(1)
 
+    # Use a persistent directory workspace so worker outputs survive task
+    # completion (scratch workspaces are cleaned up on done). This prevents
+    # the loss of reports when tasks move to done status.
+    swarm_workspace_root = os.path.expanduser("~/.hermes/kanban/workspaces")
+    os.makedirs(swarm_workspace_root, exist_ok=True)
+
     try:
         swarm = ks.create_swarm(
             conn=conn,
@@ -156,6 +162,8 @@ def main():
             tenant=args.tenant,
             created_by=args.created_by,
             priority=args.priority,
+            workspace_kind="dir",
+            workspace_path=swarm_workspace_root,
         )
     except Exception as e:
         print(f"Error spawning Kanban Swarm graph: {e}", file=sys.stderr)

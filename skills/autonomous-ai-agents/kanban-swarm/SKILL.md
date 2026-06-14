@@ -208,13 +208,26 @@ Quality scoring (1-10 on Depth, Data Quality, Sourcing, Structure, Unique Insigh
 
 ## Scratch Workspace Lifecycle
 
-Scratch workspaces (`~/.hermes/kanban/workspaces/<task_id>/`) are **cleaned up when the task moves to `done`**. To recover outputs after cleanup:
+**IMPORTANT:** Swarm `swarm.py` now uses `workspace_kind="dir"` with a persistent path (`~/.hermes/kanban/workspaces/`) so worker reports **survive task completion**. Previously, scratch workspaces were cleaned up on `done`, requiring manual recovery from session databases.
+
+### Recovering Outputs
+With the `dir` workspace pattern, reports persist at `~/.hermes/kanban/workspaces/<task_id>/report.md` after completion. If you need to recover from an older `scratch` run:
 - Query the worker's `state.db` for `write_file` tool call arguments:
   ```bash
   sqlite3 ~/.hermes/profiles/<worker>/state.db \
     "SELECT tool_calls FROM messages WHERE session_id='<session_id>' AND tool_calls LIKE '%write_file%';"
   ```
 - Or check `task_comments` on the root card — well-behaved workers post their key findings there.
+
+### Archive to Obsidian (Recommended Post-Run)
+After a completed swarm, copy all worker reports + syntheses to a dated Obsidian folder for comparison and future reference:
+```bash
+DEST="~/Obsidian/main-vault/10-Backlog/Content/Swarm Comparisons/<Swarm Name> - <Date>"
+mkdir -p "$DEST/workers"
+cp ~/.hermes/kanban/workspaces/<worker_task_id>/report.md "$DEST/workers/<worker_name>_report.md"
+cp ~/.hermes/kanban/workspaces/<analyst_task_id>/*.md "$DEST/"
+```
+This ensures outputs are never lost and enables cross-run comparisons (e.g. medium vs high reasoning).
 
 ---
 
