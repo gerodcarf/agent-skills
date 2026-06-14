@@ -54,7 +54,7 @@
       "worker-frontier4"
     ],
     "judge": "analyst",
-    "description": "Kanban Swarm: 4 Frontier workers (GPT-5.5-high, Gemini-3.5-Flash-high, Claude-Opus-4.8, Grok-4.3)"
+    "description": "Kanban Swarm: 4 Frontier workers (GPT-5.5-medium, Gemini-3.5-Flash-medium, Claude-Opus-4.8, Grok-4.3)"
   },
   "swarm_cheap": {
     "panel": [
@@ -90,6 +90,6 @@
       "worker-cheap4"
     ],
     "judge": "analyst",
-    "description": "Definitive Power Swarm: 4 Frontier (GPT-5.5-high, Gemini-3.5-flash-high, Claude-Opus, Grok-4.3) + 2 Best Cheap (GLM-5.2, DeepSeek-V4-Pro)"
+    "description": "Definitive Power Swarm: 4 Frontier (GPT-5.5-medium, Gemini-3.5-flash-medium, Claude-Opus, Grok-4.3) + 2 Best Cheap (GLM-5.2, DeepSeek-V4-Pro)"
   }
 }

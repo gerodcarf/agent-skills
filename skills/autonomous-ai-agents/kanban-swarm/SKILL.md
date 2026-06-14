@@ -235,4 +235,4 @@ Scratch workspaces (`~/.hermes/kanban/workspaces/<task_id>/`) are **cleaned up w
 * **OmniRoute circuit breakers**: If workers hit `503 provider_circuit_open` or `429` rate limits, they'll fall back to Nous/openrouter. Check logs before attributing output quality to the intended model.
 * **Grok-4.3 writes to blackboard only** by default — include explicit "save a markdown file" in the worker body prompt when assigning to xAI models.
 * **Reasoning effort config**: Use `${REASONING_LEVEL:-medium}` in profile `config.yaml` to allow runtime control via env var or `model_override` column.
-* **Profile `reasoning_effort: high` is the default for all swarm workers** per the kanban-swarm convention. Cheap workers can use `medium` if cost-sensitive.
+* **Profile `reasoning_effort: medium` is the default for all swarm workers** per the updated kanban-swarm convention. They can use `high` if comparative reasoning tests require it, but medium is preferred for cost and speed tradeoffs.
