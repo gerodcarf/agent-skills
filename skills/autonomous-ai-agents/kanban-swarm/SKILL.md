@@ -179,43 +179,30 @@ else:
 
 ---
 
-## Post-Run: Worker Comparison & Grading
+## Post-Run: Worker Comparison & Observability
 
-After a swarm completes, compare worker outputs to identify which models produce the best results.
+After a swarm completes, standard procedure is to log token metrics and collect comparison data.
 
-### 1. Verify Workers Ran on Their Intended Models (Fallback Detection)
-Before grading, check agent logs for fallback contamination:
+### 1. Verification & Fallback Detection
+Before analyzing, verify which models executed on target vs. which triggered fallbacks:
 ```bash
 grep "Fallback activated" ~/.hermes/profiles/<worker>/logs/agent.log | grep "<session_id>"
 ```
-If a worker fell back (e.g., `cx/gpt-5.5-high → openai/gpt-5.5 (nous)`), its output is NOT from the intended model. Flag this in the comparison.
 
-### 2. Collect Timing & Size Data
+### 2. Collect Token and Cost Observability
+For every run, collect exact input/output/cached token counts and compile the final P&L spreadsheet. 
 ```bash
-# Elapsed time from kanban DB (in seconds)
-sqlite3 ~/.hermes/kanban.db "SELECT assignee, (completed_at - started_at) as elapsed_s FROM tasks WHERE id = '<task_id>';"
-
-# Report size
-wc -c ~/.hermes/kanban/workspaces/<task_id>/*.md
-
-# API call count and model from logs
-grep "API call #" ~/.hermes/profiles/<worker>/logs/agent.log | grep "<session_id>" | tail -3
+# Query the worker's session database directly:
+sqlite3 ~/.hermes/profiles/<worker>/state.db \
+  "SELECT model, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens FROM sessions WHERE id='<session_id>';"
 ```
+Convert raw values to estimated commercial OpenRouter rates per 1M tokens (e.g. $5.00/1M input for Claude/GPT-5, $0.10/1M for GLM, $0.55/1M for DeepSeek, and standard $0.075/1M input / $0.30/1M output for Gemini-3.5-Flash).
 
-### 3. Read the Actual Reports — Don't Script It
-**Do NOT use `execute_code` with elaborate Python analysis scripts to score reports.** Use `read_file` and `terminal` directly. Scripting the analysis raises questions ("why are you running Python scripts?") and adds latency for no benefit.
-
-### 4. Scoring Dimensions
-Grade each worker on:
-- **Analytical depth** — unique framing, non-obvious insights
-- **Data quality** — specific numbers, correct financials, sourced claims
-- **Sourcing** — inline URLs, named sources, cross-references
-- **Framework/structure** — weighted scoring, threat matrices, layer decomposition
-- **Unique insights** — things no other worker found
-- **Actionability** — would an investor/analyst find this directly useful?
-
-### 5. Post Results to Root Blackboard
-Write the grading report as a structured comment on the swarm root card. Include the model-to-worker mapping.
+### 3. Optional Quality Scoring
+Quality scoring (1-10 on Depth, Data Quality, Sourcing, Structure, Unique Insights, and Actionability) is optional. When requested:
+- Read worker reports (`read_file` or `terminal` cat) directly.
+- **Do NOT write elaborate python scraper/analyzer scripts** — read the files or database comments directly to avoid workflow latency.
+- Grade workers side-by-side against each other, scoring comparatively without tie composite scores. Post card scorecard to the root board.
 
 ---
 
