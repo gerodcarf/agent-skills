@@ -94,6 +94,8 @@ def main():
     parser.add_argument("--priority", type=int, default=10, help="Priority tiebreaker (default 10).")
     parser.add_argument("--created-by", default="swarm-orchestrator", help="Creator name (default swarm-orchestrator).")
     parser.add_argument("--json", action="store_true", help="Emit output in JSON format.")
+    parser.add_argument("--model-overrides", default="",
+                        help="Comma-separated profile:model overrides (e.g. worker-frontier1:cx/gpt-5.5-high).")
     args = parser.parse_args()
 
     goal = args.goal.strip()
@@ -131,6 +133,26 @@ def main():
         print(f"Error spawning Kanban Swarm graph: {e}", file=sys.stderr)
         sys.exit(1)
 
+    # Apply database runtime model overrides if specified
+    model_override_applied = []
+    if args.model_overrides:
+        overrides = {}
+        for item in args.model_overrides.split(","):
+            if ":" in item:
+                prof, mod = item.split(":", 1)
+                overrides[prof.strip()] = mod.strip()
+        
+        cursor = conn.cursor()
+        all_task_ids = swarm.worker_ids + [swarm.verifier_id, swarm.synthesizer_id]
+        for task_id in all_task_ids:
+            cursor.execute("SELECT assignee FROM tasks WHERE id = ?", (task_id,))
+            row = cursor.fetchone()
+            if row and row[0] in overrides:
+                target_model = overrides[row[0]]
+                cursor.execute("UPDATE tasks SET model_override = ? WHERE id = ?", (target_model, task_id))
+                model_override_applied.append(f"{row[0]} -> {target_model}")
+        conn.commit()
+
     # Subscribe original session platform / chat to the synthesizer task so gateway auto-sends final report
     platform = os.environ.get("HERMES_SESSION_PLATFORM")
     chat_id = os.environ.get("HERMES_SESSION_CHAT_ID")
@@ -158,6 +180,7 @@ def main():
     if args.json:
         result = swarm.as_dict()
         result["subscribed"] = subscribed
+        result["model_overrides"] = model_override_applied
         print(json.dumps(result, indent=2))
     else:
         print("Kanban Swarm v1 Graph Spawned successfully!")
@@ -165,6 +188,8 @@ def main():
         print(f"  Workers:           {', '.join(swarm.worker_ids)} ({args.workers})")
         print(f"  Verifier:          {swarm.verifier_id} ({args.verifier})")
         print(f"  Synthesizer:       {swarm.synthesizer_id} ({args.synthesizer})")
+        if model_override_applied:
+            print(f"  Model Overrides:   {', '.join(model_override_applied)}")
         if subscribed:
             print(f"  Notifications:     Subscribed active channel {platform}:{chat_id}:{thread_id} to Synthesizer {swarm.synthesizer_id}.")
             print("  Handoff Target:    Once the analyst synthesizes the findings, the final Markdown report will be delivered here automatically.")

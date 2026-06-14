@@ -47,7 +47,7 @@ To execute a swarm, you map workers to dedicated Hermes profiles. This guarantee
 ### Creating a Swarm Profile
 Copy a template or base profile to set up your worker:
 ```bash
-cp -r ~/.hermes/profiles/_template ~/.hermes/profiles/my-swarm-worker
+cp -r ~/.hermes/profiles/_template ~/.hermes/profiles/my-profile-name
 ```
 
 ### Config.yaml Specifications
@@ -70,16 +70,26 @@ providers:
     base_url: ${OMNIROUTE_URL}/v1
     api_key: ${OMNIROUTE_API_KEY}
 
-approvals:
-  mode: auto                    # Allows autonomous background execution
-
+# Enable standard developer toolsets (CLI and background shell)
 toolsets:
   - terminal
   - file
   - web
   - browser
   - kanban
-  - code_execution
+  - code_execution            # Note: "code_execution" is valid; "code_exec" is deprecated/invalid.
+
+platform_toolsets:
+  cli:
+    - terminal
+    - file
+    - web
+    - browser
+    - kanban
+    - code_execution
+
+approvals:
+  mode: auto                    # Allows autonomous background execution
 
 agent:
   max_turns: 120
@@ -173,6 +183,6 @@ def launch_swarm(goal: str, worker_profiles: list, verifier: str, synthesizer: s
 
 ## Pitfalls & Best Practices
 
-* **Missing `.env` files**: New profiles must have `.env` and `.env.mapping` files copied from a working profile to resolve base urls and api keys.
-* **Infinite Loops**: Ensure all background workers end their sessions by calling `kanban_complete()` or `kanban_block()`. Stale worker tasks block downstream verifiers.
-* **Blackboard updates**: Instruct your workers to write intermediate notes as comments to the root task (`root_id`), allowing them to feed coordinates/conclusions into a shared thread.
+* **Missing `.env` files**: New profiles must have `.env` and `.env.mapping` files copied from a working profile to avoid authorization timeouts.
+* **Infinite Loops**: Worker nodes must call `kanban_complete()` or `kanban_block()`. Running workers past their limits blocks downstream gates.
+* **Blackboard updates**: Workers should log coordinate progress by writing comments back to the root task (`root_id`) for aggregation.
