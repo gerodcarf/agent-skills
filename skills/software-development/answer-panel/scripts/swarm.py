@@ -210,7 +210,7 @@ def main():
     else:
         print("Kanban Swarm v1 Graph Spawned successfully!")
         print(f"  Swarm Root Card:   {swarm.root_id}")
-        print(f"  Workers:           {', '.join(swarm.worker_ids)} ({args.workers})")
+        print(f"  Workers:           {', '.join(swarm.worker_ids)} ({', '.join(profiles_list)})")
         print(f"  Verifier:          {swarm.verifier_id} ({args.verifier})")
         print(f"  Synthesizer:       {swarm.synthesizer_id} ({args.synthesizer})")
         if model_override_applied:
