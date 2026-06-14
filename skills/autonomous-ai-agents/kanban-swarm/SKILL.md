@@ -1,7 +1,7 @@
 ---
 name: kanban-swarm
 description: Design pattern and launch guide for orchestrating a swarm of specialized agent profiles in parallel using Kanban dependency graphs and platform deliveries.
-version: 1.0.0
+version: 1.1.0
 category: autonomous-ai-agents
 ---
 
@@ -45,12 +45,30 @@ graph TD
 To execute a swarm, you map workers to dedicated Hermes profiles. This guarantees model diversity, reasoning levels, and custom tool authorizations.
 
 ### Creating a Swarm Profile
-Copy a template or base profile to set up your worker:
+
+To add a new model to the swarm (e.g., `worker-frontier4` for Grok-4.3):
+
 ```bash
-cp -r ~/.hermes/profiles/_template ~/.hermes/profiles/my-profile-name
+# 1. Create the profile directory
+mkdir -p ~/.hermes/profiles/worker-<name>/
+
+# 2. Write config.yaml with the model, provider, fallbacks, and toolsets
+#    (see template below)
+
+# 3. Copy credential files from a working profile
+cp ~/.hermes/profiles/worker-frontier1/.env ~/.hermes/profiles/worker-<name>/.env
+cp ~/.hermes/profiles/worker-frontier1/.env.mapping ~/.hermes/profiles/worker-<name>/.env.mapping
+
+# 4. Verify the profile works
+hermes --profile worker-<name> chat -q "hello, what model are you? reply in 10 words or less"
+
+# 5. Add to presets.json
 ```
 
+**Note:** Non-omniroute providers (e.g., `grok-oauth` for Grok-4.3) inherit global config from `~/.hermes/config.yaml`; only omniroute needs an explicit `providers:` block in profile config.
+
 ### Config.yaml Specifications
+
 Every specialist worker profile must define its connection routing, fallbacks, toolsets, and reasoning effort:
 
 ```yaml
@@ -70,14 +88,13 @@ providers:
     base_url: ${OMNIROUTE_URL}/v1
     api_key: ${OMNIROUTE_API_KEY}
 
-# Enable standard developer toolsets (CLI and background shell)
 toolsets:
   - terminal
   - file
   - web
   - browser
   - kanban
-  - code_execution            # Note: "code_execution" is valid; "code_exec" is deprecated/invalid.
+  - code_execution            # "code_execution" is valid; "code_exec" is deprecated/invalid.
 
 platform_toolsets:
   cli:
@@ -89,12 +106,12 @@ platform_toolsets:
     - code_execution
 
 approvals:
-  mode: auto                    # Allows autonomous background execution
+  mode: auto
 
 agent:
   max_turns: 120
   gateway_timeout: 1800
-  reasoning_effort: medium     # Match thinking budget to task type
+  reasoning_effort: ${REASONING_LEVEL:-medium}   # Allows runtime control via env var
 ```
 
 ### Context Window Strategy
@@ -103,81 +120,122 @@ agent:
 
 ---
 
-## Launching a Swarm Programmatically (Python)
+## Launching a Swarm
 
-A swarm launcher script builds the task graph in the SQLite database and binds the active platform delivery context.
+### Via CLI Script (Recommended)
+```bash
+# Use presets
+~/agent-skills/skills/software-development/answer-panel/scripts/swarm.py \
+  --preset swarm_frontier \
+  "Evaluate the defensibility of ASML's EUV lithography moat"
 
+# Custom workers + model overrides
+~/agent-skills/skills/software-development/answer-panel/scripts/swarm.py \
+  --workers worker-frontier1,worker-frontier2,worker-frontier3,worker-frontier4 \
+  --model-overrides "worker-frontier1:cx/gpt-5.5-high,worker-frontier2:agy/gemini-3.5-flash-high" \
+  "Goal text"
+```
+
+Key flags: `--preset`, `--workers`, `--verifier`, `--synthesizer`, `--model-overrides`, `--json`.
+
+Presets: `~/agent-skills/skills/software-development/answer-panel/scripts/presets.json`
+
+### Via Python (Programmatic)
 ```python
-import os
-import subprocess
-import sqlite3
+import os, subprocess
 from hermes_cli import kanban_db as kb
 from hermes_cli import kanban_swarm as ks
 from hermes_cli.kanban_swarm import SwarmWorkerSpec
 
-def launch_swarm(goal: str, worker_profiles: list, verifier: str, synthesizer: str):
-    # Connect to local Kanban Database
-    conn = kb.connect()
-    
-    # 1. Define Worker specs
-    workers = []
-    for profile in worker_profiles:
-        workers.append(SwarmWorkerSpec(
-            profile=profile,
-            title=f"Worker ({profile}) analysis for {goal[:50]}...",
-            body=f"Assess this goal from your specialty lens:\n\n{goal}",
-            skills=[]
-        ))
-        
-    # 2. Build the DAG in SQLite
-    swarm = ks.create_swarm(
-        conn=conn,
-        goal=goal,
-        workers=workers,
-        verifier_assignee=verifier,
-        synthesizer_assignee=synthesizer,
-        root_title=f"Swarm: {goal[:50]}..."
-    )
-    
-    # 3. Bind Platform Delivery
-    # Retain active Discord/Telegram thread environment variables
-    platform = os.environ.get("HERMES_SESSION_PLATFORM")
-    chat_id = os.environ.get("HERMES_SESSION_CHAT_ID")
-    thread_id = os.environ.get("HERMES_SESSION_THREAD_ID")
-    
-    if platform and chat_id:
-        cmd = [
-            "/Users/ambler/.hermes/hermes-agent/venv/bin/hermes",
-            "kanban", "notify-subscribe",
-            swarm.synthesizer_id,
-            "--platform", platform,
-            "--chat-id", chat_id
-        ]
-        if thread_id:
-            cmd.extend(["--thread-id", thread_id])
-            
-        subprocess.run(cmd, check=True)
+conn = kb.connect()
+workers = [SwarmWorkerSpec(profile="worker-frontier1", title="...", body="...", skills=[], priority=10)]
+swarm = ks.create_swarm(conn=conn, goal="...", workers=workers, verifier_assignee="reviewer", synthesizer_assignee="analyst")
+
+# Subscribe active channel to synthesizer for auto-delivery
+platform = os.environ.get("HERMES_SESSION_PLATFORM")
+chat_id = os.environ.get("HERMES_SESSION_CHAT_ID")
+thread_id = os.environ.get("HERMES_SESSION_THREAD_ID")
+if platform and chat_id:
+    cmd = ["hermes", "kanban", "notify-subscribe", swarm.synthesizer_id, "--platform", platform, "--chat-id", chat_id]
+    if thread_id: cmd.extend(["--thread-id", thread_id])
+    subprocess.run(cmd, check=True)
 ```
+
+---
+
+## Runtime Model Overrides
+
+The `tasks.model_override` column enables per-task model changes without editing profiles:
+- **Full model slug** (e.g., `cx/gpt-5.5-high`) — passed as `-m` flag to spawned CLI
+- **Reasoning keyword** (`low`/`medium`/`high`/`xhigh`) — injected as `REASONING_LEVEL` env var
+
+Dispatcher logic in `kanban_db.py:_default_spawn()`:
+```python
+if task.model_override in ("low", "medium", "high", "xhigh"):
+    env["REASONING_LEVEL"] = task.model_override
+else:
+    cmd.extend(["-m", task.model_override])
+```
+
+---
+
+## Post-Run: Worker Comparison & Grading
+
+After a swarm completes, compare worker outputs to identify which models produce the best results.
+
+### 1. Verify Workers Ran on Their Intended Models (Fallback Detection)
+Before grading, check agent logs for fallback contamination:
+```bash
+grep "Fallback activated" ~/.hermes/profiles/<worker>/logs/agent.log | grep "<session_id>"
+```
+If a worker fell back (e.g., `cx/gpt-5.5-high → openai/gpt-5.5 (nous)`), its output is NOT from the intended model. Flag this in the comparison.
+
+### 2. Collect Timing & Size Data
+```bash
+# Elapsed time from kanban DB (in seconds)
+sqlite3 ~/.hermes/kanban.db "SELECT assignee, (completed_at - started_at) as elapsed_s FROM tasks WHERE id = '<task_id>';"
+
+# Report size
+wc -c ~/.hermes/kanban/workspaces/<task_id>/*.md
+
+# API call count and model from logs
+grep "API call #" ~/.hermes/profiles/<worker>/logs/agent.log | grep "<session_id>" | tail -3
+```
+
+### 3. Read the Actual Reports — Don't Script It
+**Do NOT use `execute_code` with elaborate Python analysis scripts to score reports.** Use `read_file` and `terminal` directly. Scripting the analysis raises questions ("why are you running Python scripts?") and adds latency for no benefit.
+
+### 4. Scoring Dimensions
+Grade each worker on:
+- **Analytical depth** — unique framing, non-obvious insights
+- **Data quality** — specific numbers, correct financials, sourced claims
+- **Sourcing** — inline URLs, named sources, cross-references
+- **Framework/structure** — weighted scoring, threat matrices, layer decomposition
+- **Unique insights** — things no other worker found
+- **Actionability** — would an investor/analyst find this directly useful?
+
+### 5. Post Results to Root Blackboard
+Write the grading report as a structured comment on the swarm root card. Include the model-to-worker mapping.
+
+---
+
+## Scratch Workspace Lifecycle
+
+Scratch workspaces (`~/.hermes/kanban/workspaces/<task_id>/`) are **cleaned up when the task moves to `done`**. To recover outputs after cleanup:
+- Query the worker's `state.db` for `write_file` tool call arguments:
+  ```bash
+  sqlite3 ~/.hermes/profiles/<worker>/state.db \
+    "SELECT tool_calls FROM messages WHERE session_id='<session_id>' AND tool_calls LIKE '%write_file%';"
+  ```
+- Or check `task_comments` on the root card — well-behaved workers post their key findings there.
 
 ---
 
 ## Verification & Monitoring
 
-1. **Audit Graph Insertion**:
-   Ensure all tasks were written correctly:
-   ```bash
-   hermes kanban list --status ready
-   ```
-2. **Inspect Context Pipeline**:
-   Verify what a worker sees when claiming a task (including sibling/parent comments and results):
-   ```bash
-   hermes kanban show <task_id>
-   ```
-3. **Gateway Logs**:
-   Monitor the dispatcher ticks to ensure workers promote and execute cleanly:
-   ```bash
-   tail -f ~/.hermes/logs/gateway.log
-   ```
+1. **Audit Graph Insertion**: `hermes kanban list --status ready`
+2. **Inspect Context Pipeline**: `hermes kanban show <task_id>`
+3. **Gateway Logs**: `tail -f ~/.hermes/logs/gateway.log`
 
 ---
 
@@ -185,4 +243,9 @@ def launch_swarm(goal: str, worker_profiles: list, verifier: str, synthesizer: s
 
 * **Missing `.env` files**: New profiles must have `.env` and `.env.mapping` files copied from a working profile to avoid authorization timeouts.
 * **Infinite Loops**: Worker nodes must call `kanban_complete()` or `kanban_block()`. Running workers past their limits blocks downstream gates.
-* **Blackboard updates**: Workers should log coordinate progress by writing comments back to the root task (`root_id`) for aggregation.
+* **Blackboard updates**: Workers should log findings by writing comments back to the root task (`root_id`) for aggregation.
+* **Don't over-engineer analysis**: Use `read_file` and `terminal` directly to examine worker outputs. Do NOT write elaborate `execute_code` Python scripts — the user will question why you're running scripts instead of reading files.
+* **OmniRoute circuit breakers**: If workers hit `503 provider_circuit_open` or `429` rate limits, they'll fall back to Nous/openrouter. Check logs before attributing output quality to the intended model.
+* **Grok-4.3 writes to blackboard only** by default — include explicit "save a markdown file" in the worker body prompt when assigning to xAI models.
+* **Reasoning effort config**: Use `${REASONING_LEVEL:-medium}` in profile `config.yaml` to allow runtime control via env var or `model_override` column.
+* **Profile `reasoning_effort: high` is the default for all swarm workers** per the kanban-swarm convention. Cheap workers can use `medium` if cost-sensitive.

@@ -75,7 +75,10 @@ def get_specialized_worker(profile: str, goal: str, priority: int) -> SwarmWorke
             body=(
                 f"Provide your analysis and perspectives on the research goal from your model's lens.\n\n"
                 f"Swarm Goal:\n{goal}\n\n"
-                "Conduct research, outline your findings, and log your structured insights."
+                "Conduct research, outline your findings, and log your structured insights.\n\n"
+                "IMPORTANT: Save your full analysis as a markdown report to your workspace "
+                "using write_file (e.g., report.md). Post a summary to the blackboard via kanban_comment "
+                "on the root task with key findings. Do NOT only post to the blackboard — the written artifact is required."
             ),
             skills=[],  # Custom workers leverage their own profile default skills
             priority=priority

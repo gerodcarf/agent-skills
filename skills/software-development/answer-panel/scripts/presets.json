@@ -50,10 +50,11 @@
     "panel": [
       "worker-frontier1",
       "worker-frontier2",
-      "worker-frontier3"
+      "worker-frontier3",
+      "worker-frontier4"
     ],
     "judge": "analyst",
-    "description": "Kanban Swarm: 3 Frontier workers (worker-frontier1, worker-frontier2, worker-frontier3)"
+    "description": "Kanban Swarm: 4 Frontier workers (GPT-5.5-high, Gemini-3.5-Flash-high, Claude-Opus-4.8, Grok-4.3)"
   },
   "swarm_cheap": {
     "panel": [
@@ -63,6 +64,32 @@
       "worker-cheap4"
     ],
     "judge": "analyst",
-    "description": "Kanban Swarm: 4 Budget workers (worker-cheap1, worker-cheap2, worker-cheap3, worker-cheap4)"
+    "description": "Kanban Swarm: 4 Budget workers (GLM-5.2, Mimo-v2.5-Pro, MiniMax-M3, DeepSeek-V4-Pro)"
+  },
+  "swarm_all": {
+    "panel": [
+      "worker-frontier1",
+      "worker-frontier2",
+      "worker-frontier3",
+      "worker-frontier4",
+      "worker-cheap1",
+      "worker-cheap2",
+      "worker-cheap3",
+      "worker-cheap4"
+    ],
+    "judge": "analyst",
+    "description": "Kanban Swarm: All 8 workers — 4 frontier + 4 cheap"
+  },
+  "definitive_power": {
+    "panel": [
+      "worker-frontier1",
+      "worker-frontier2",
+      "worker-frontier3",
+      "worker-frontier4",
+      "worker-cheap1",
+      "worker-cheap4"
+    ],
+    "judge": "analyst",
+    "description": "Definitive Power Swarm: 4 Frontier (GPT-5.5-high, Gemini-3.5-flash-high, Claude-Opus, Grok-4.3) + 2 Best Cheap (GLM-5.2, DeepSeek-V4-Pro)"
   }
 }
