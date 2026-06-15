@@ -23,8 +23,8 @@ The text after `/committee` is the research goal. Be specific — this becomes t
    - `worker-cheap1` — GLM-5.2 (consistently top-scored analytical model)
    - `worker-cheap3` — MiniMax-M3 (framework innovator, surfaces novel angles)
    - `worker-cheap4` — DeepSeek-V4-Pro (quantitative depth)
-   - `worker-frontier2` — Gemini-3.5-flash-medium (geopolitical/strategic framing)
-   - `worker-frontier1` — GPT-5.5-medium (sourcing and citation rigor)
+   - `worker-frontier1-librarian` — Gemini-3.5-flash-medium (librarian context compiler + research lane)
+   - `worker-frontier2` — GPT-5.5-medium (sourcing, detail mapping & citation rigor)
    - `worker-frontier4` — Grok-4.3 (frontier4; adversarial/frontier reasoning)
 2. **Every worker must produce source-traceable output**: a `Source Ledger`, a `Claim Register`, and material claims linked to stable source IDs (e.g. `worker-frontier1-S01`). Workers should distinguish original sources from KOS context, note access date/path/URL, and quote or line-reference the evidence behind each key claim.
 3. **Reviewer** (`reviewer` profile) cross-checks all outputs for contradictions and hallucinations **and performs a source credibility audit**. The reviewer should mark source IDs as primary/secondary, timely/stale, direct/indirect, credible/questionable, and explicitly identify unsupported claims that must not carry forward.
