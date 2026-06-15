@@ -1,0 +1,60 @@
+{
+    "committee_default": {
+        "panel": [
+            "worker-cheap1",
+            "worker-cheap3",
+            "worker-cheap4",
+            "worker-frontier1-librarian",
+            "worker-frontier2",
+            "worker-frontier4"
+        ],
+        "judge": "analyst",
+        "description": "Default /committee: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash (librarian), GPT-5.5, Grok-4.3 (all medium reasoning)"
+    },
+    "committee_frontier": {
+        "panel": [
+            "worker-frontier1-librarian",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Committee: 4 frontier/librarian workers (Gemini-3.5-Flash librarian lane, GPT-5.5, Claude/Opus lane, Grok-4.3)"
+    },
+    "committee_cheap": {
+        "panel": [
+            "worker-cheap1",
+            "worker-cheap2",
+            "worker-cheap3",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Committee: 4 budget workers (GLM-5.2, Mimo-v2.5-Pro, MiniMax-M3, DeepSeek-V4-Pro)"
+    },
+    "committee_all": {
+        "panel": [
+            "worker-frontier1-librarian",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4",
+            "worker-cheap1",
+            "worker-cheap2",
+            "worker-cheap3",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Committee: all active frontier/librarian and budget workers"
+    },
+    "committee_definitive_power": {
+        "panel": [
+            "worker-frontier1-librarian",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4",
+            "worker-cheap1",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Definitive Power Committee: frontier/librarian lanes plus strongest budget workers (GLM-5.2, DeepSeek-V4-Pro)"
+    }
+}

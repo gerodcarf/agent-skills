@@ -232,7 +232,7 @@ def create_committee_swarm(
         "Run this terminal command exactly:\n\n"
         "```bash\n"
         f"/Users/ambler/.hermes/hermes-agent/venv/bin/python "
-        f"~/agent-skills/skills/software-development/answer-panel/scripts/librarian_feeder.py "
+        f"~/agent-skills/skills/autonomous-ai-agents/committee/scripts/librarian_feeder.py "
         f"--goal {shlex.quote(goal)} --workspace-dir {shlex.quote(swarm_workspace_dir)}\n"
         "```\n\n"
         "Verify that `kos_context.md` was successfully created under your workspace, then mark this task done."
