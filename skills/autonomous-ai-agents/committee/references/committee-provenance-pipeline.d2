@@ -1,0 +1,167 @@
+direction: right
+
+# Containers & Roles/Artifacts definition
+
+user: {
+  label: "User / Originating Thread"
+  thread: "Originating Thread" {
+    shape: oval
+  }
+}
+
+orchestrator: {
+  label: "Committee Orchestrator"
+  runner: "Runner\n(committee.py)" {
+    shape: rectangle
+  }
+  blackboard: "Root Kanban Card\n(Blackboard)" {
+    shape: square
+  }
+  workspace: "Persistent Workspace\n(t_<root_id>/)" {
+    shape: page
+  }
+}
+
+librarian: {
+  label: "Librarian Lane"
+  compiler: "Librarian Context Compiler" {
+    shape: rectangle
+  }
+  kos_ctx: "kos_context.md" {
+    shape: page
+  }
+}
+
+workers: {
+  label: "Parallel Worker Lanes"
+  lane: "Parallel Worker Lanes\n(cheap & frontier)" {
+    shape: rectangle
+  }
+  report: "worker_report.md" {
+    shape: page
+  }
+  ledger: "Source Ledger" {
+    shape: page
+  }
+  claims: "Claim Register" {
+    shape: page
+  }
+  nom_sources: "KOS Candidate Sources" {
+    shape: page
+  }
+}
+
+reviewer: {
+  label: "Reviewer Gate"
+  gate: "Reviewer Gate" {
+    shape: rectangle
+  }
+  audit: "Source Credibility Audit" {
+    shape: page
+  }
+  weak_claims: "Unsupported / Weak Claims" {
+    shape: page
+  }
+  ingest_candidates: "KOS Ingestion Candidates" {
+    shape: page
+  }
+  decision: "Pass / Block Decision" {
+    shape: diamond
+  }
+}
+
+synthesizer: {
+  label: "Synthesizer"
+  syn: "Synthesizer" {
+    shape: rectangle
+  }
+  synthesis: "Final Synthesis" {
+    shape: page
+  }
+  traceability: "References / Source Traceability" {
+    shape: page
+  }
+}
+
+curator: {
+  label: "Later KOS Curator"
+  curator_pass: "Later KOS Curator\n(Separate Ingestion Pass)" {
+    shape: rectangle
+  }
+  obsidian: "Obsidian / KOS" {
+    shape: cylinder
+  }
+}
+
+# Flow & Connections
+
+# 1. Initialization
+user.thread -> orchestrator.runner: "Launch /committee"
+orchestrator.runner -> orchestrator.blackboard: "Seeds blackboard"
+orchestrator.runner -> orchestrator.workspace: "Initializes directory"
+
+# 2. Context compilation
+orchestrator.workspace -> librarian.compiler: "Reads workspace reference"
+librarian.compiler -> librarian.kos_ctx: "Compiles context to"
+
+# 3. Swarm fanout
+librarian.kos_ctx -> workers.lane: "Feeds workspace context"
+orchestrator.blackboard -> workers.lane: "Dispatches tasks"
+
+# 4. Worker execution
+workers.lane -> workers.report: "Outputs"
+workers.report -> workers.ledger: "Defines"
+workers.report -> workers.claims: "Defines"
+workers.report -> workers.nom_sources: "Defines"
+
+# 5. Reviewer gate
+workers.report -> reviewer.gate: "Submitted to"
+reviewer.gate -> reviewer.audit: "Compiles"
+reviewer.gate -> reviewer.weak_claims: "Extracts"
+reviewer.gate -> reviewer.ingest_candidates: "Triages"
+
+reviewer.audit -> reviewer.decision: "Audits source links"
+reviewer.weak_claims -> reviewer.decision: "Audits statement support"
+reviewer.ingest_candidates -> reviewer.decision: "Audits curation recommendations"
+
+# 6. Pass/Block decision routing
+reviewer.decision -> orchestrator.blackboard: "Block: Sets task to Blocked" {
+  style.stroke: red
+  style.stroke-width: 2
+}
+reviewer.decision -> synthesizer.syn: "Pass: Signals Synthesizer" {
+  style.stroke: green
+  style.stroke-width: 2
+}
+
+# 7. Synthesis
+synthesizer.syn -> synthesizer.synthesis: "Creates"
+synthesizer.synthesis -> synthesizer.traceability: "Appends"
+
+# 8. Auto-delivery
+synthesizer.synthesis -> user.thread: "Auto-delivery back to thread" {
+  style.stroke: blue
+  style.stroke-width: 2
+}
+
+# Provenance/candidate flows (dashed edges)
+workers.ledger -> synthesizer.traceability: {
+  style.stroke-dash: 5
+  label: "Source IDs -> Traceability Table"
+}
+workers.claims -> synthesizer.traceability: {
+  style.stroke-dash: 5
+  label: "Claims -> Ref citations"
+}
+reviewer.audit -> synthesizer.traceability: {
+  style.stroke-dash: 5
+  label: "Credibility status"
+}
+workers.nom_sources -> curator.curator_pass: {
+  style.stroke-dash: 5
+  label: "Nominated candidates"
+}
+curator.curator_pass -> curator.obsidian: {
+  style.stroke-dash: 5
+  label: "Curated ingestion"
+}

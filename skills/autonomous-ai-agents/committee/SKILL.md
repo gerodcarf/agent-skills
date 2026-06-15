@@ -46,6 +46,15 @@ After launch, report the task IDs and worker assignments back to the user. Do **
 
 Expected wall time: roughly 8–12 minutes for the default roster, depending on worker latency and research depth. Expected cost: roughly $0.50–$1.00, model-dependent.
 
+## Architecture Diagram
+
+The flow of roles, artifacts, and source/claim provenance through the committee is mapped out from initiation to final synthesis and KOS curation:
+
+- [D2 Source Diagram](references/committee-provenance-pipeline.d2)
+- [SVG Rendered Diagram](references/committee-provenance-pipeline.svg)
+
+![Committee Provenance Pipeline](references/committee-provenance-pipeline.svg)
+
 ## Default Worker Roster
 
 The default preset uses 6 parallel workers at medium reasoning:
