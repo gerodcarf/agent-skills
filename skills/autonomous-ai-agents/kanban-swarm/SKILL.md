@@ -125,12 +125,12 @@ agent:
 ### Via CLI Script (Recommended)
 ```bash
 # Use presets
-~/agent-skills/skills/software-development/answer-panel/scripts/swarm.py \
-  --preset swarm_frontier \
+~/agent-skills/skills/software-development/answer-panel/scripts/committee.py \
+  --preset committee_frontier \
   "Evaluate the defensibility of ASML's EUV lithography moat"
 
 # Custom workers + model overrides
-~/agent-skills/skills/software-development/answer-panel/scripts/swarm.py \
+~/agent-skills/skills/software-development/answer-panel/scripts/committee.py \
   --workers worker-frontier1,worker-frontier2,worker-frontier3,worker-frontier4 \
   --model-overrides "worker-frontier1:cx/gpt-5.5-high,worker-frontier2:agy/gemini-3.5-flash-high" \
   "Goal text"
