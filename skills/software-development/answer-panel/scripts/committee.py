@@ -57,12 +57,14 @@ def get_specialized_worker(profile: str, goal: str, priority: int) -> SwarmWorke
         "your workspace directory) to ground your analysis in our existing Knowledge OS files, local databases, "
         "and hindsight memories.\n\n"
         "SOURCE TRACEABILITY REQUIREMENT: Your report must preserve provenance, not just conclusions. Include:\n"
-        "1. `## Source Ledger` table with Source ID, type, title/name, URL or local path, date/access date, why used, credibility notes.\n"
+        "1. `## Source Ledger` table with Source ID, type, title/name, URL or local path, date/access date, why used, credibility notes, and KOS candidate? (Y/N/Maybe).\n"
         "2. `## Claim Register` table with Claim ID, claim, Source IDs, confidence, and caveats.\n"
-        "3. Stable IDs prefixed by your worker/profile, e.g. `worker-frontier1-S01` and `worker-frontier1-C03`.\n"
-        "4. Every material factual claim, number, ticker mapping, market-size estimate, replacement claim, and catalyst must cite one or more Source IDs.\n"
-        "5. Separate fact from inference. Cite facts directly; label inference and cite the facts it depends on.\n"
-        "6. If using `kos_context.md`, cite the original KOS path/section where visible; if provenance is incomplete, mark it `KOS excerpt — provenance incomplete`."
+        "3. `## KOS Candidate Sources` table for worker-discovered sources worth possible durable ingestion, with Source ID, proposed destination/domain, ingestion rationale, and review caveats.\n"
+        "4. Stable IDs prefixed by your worker/profile, e.g. `worker-frontier1-S01` and `worker-frontier1-C03`.\n"
+        "5. Every material factual claim, number, ticker mapping, market-size estimate, replacement claim, and catalyst must cite one or more Source IDs.\n"
+        "6. Separate fact from inference. Cite facts directly; label inference and cite the facts it depends on.\n"
+        "7. If using `kos_context.md`, cite the original KOS path/section where visible; if provenance is incomplete, mark it `KOS excerpt — provenance incomplete`.\n"
+        "8. Do NOT ingest new sources into KOS yourself unless explicitly instructed; nominate candidates for later librarian/reviewer decision."
     )
 
     if profile == "scout":
@@ -278,8 +280,10 @@ def create_committee_swarm(
         "SOURCE AUDIT REQUIREMENT: You must evaluate worker credibility and source tracing. Include:\n"
         "1. `## Source Credibility Audit` table with Source ID, Worker, Primary/secondary, Timeliness, Directness, Credibility verdict, Carry forward? (Y/N), Notes.\n"
         "2. `## Unsupported or Weakly Supported Claims` table with Claim ID, Claim, Problem, Required fix.\n"
-        "3. Verify that key claims are tied to stable source IDs and that source paths or URLs are recoverable.\n"
-        "4. BLOCK the swarm if key claims lack source IDs, rely on unvetted model memory without sources, or source links are missing or non-recoverable."
+        "3. `## KOS Ingestion Candidates` table with Source ID, Worker, proposed KOS destination/domain, ingestion priority (High/Medium/Low/Reject), reason, and caveats.\n"
+        "4. Verify that key claims are tied to stable source IDs and that source paths or URLs are recoverable.\n"
+        "5. BLOCK the swarm if key claims lack source IDs, rely on unvetted model memory without sources, or source links are missing or non-recoverable.\n"
+        "6. Do not ingest sources into KOS during verification unless explicitly instructed; classify candidates for a later librarian/curation pass."
         + context_suffix
     )
     verifier = kb.create_task(

@@ -71,19 +71,23 @@ For research/investment committees, source tracing is mandatory because final sy
 
 ### Worker Traceability Deliverables
 Each worker must write a markdown report containing:
-- `## Source Ledger`: Table of Source ID, Type, Title/Name, URL or local path, Date/Access date, Why used, and Credibility notes.
+- `## Source Ledger`: Table of Source ID, Type, Title/Name, URL or local path, Date/Access date, Why used, Credibility notes, and KOS candidate? (Y/N/Maybe).
 - `## Claim Register`: Table of Claim ID, Claim, Source IDs, Confidence, and Notes/Caveats.
+- `## KOS Candidate Sources`: Table of Source ID, Proposed destination/domain, Ingestion rationale, and Review caveats for worker-discovered sources worth possible durable ingestion.
 - Prefix IDs with worker name (e.g., `worker-frontier1-S01`, `worker-frontier1-C03`).
 - Factual claims, market-size figures, ticker mappings, and catalysts must cite a Source ID.
 - Differentiate fact from inference: cite facts directly, label inference, and cite the facts it depends on.
 - Include skepticism for low-credibility sources (such as promotional IR, stale articles, or unsourced web summaries).
+- Do NOT ingest new sources into KOS during task execution; nominate candidates for later curation/decision.
 
 ### Reviewer Credibility Audit Deliverables
 The reviewer must produce:
 - `## Source Credibility Audit`: Table of Source ID, Worker, Primary/secondary, Timeliness, Directness, Credibility verdict, Carry forward? (Y/N), and Notes.
 - `## Unsupported or Weakly Supported Claims`: Table of Claim ID, Claim, Problem, and Required fix.
+- `## KOS Ingestion Candidates`: Table of Source ID, Worker, Proposed KOS destination/domain, Ingestion priority (High/Medium/Low/Reject), Reason, and Caveats.
 - Verify that keys are tied to stable source IDs and that original paths or URLs are recoverable.
 - The reviewer must block the swarm if key claims lack source IDs, rely on unvetted model memory without sources, or source links are missing or non-recoverable.
+- Do not ingest sources into KOS during verification; classify candidates for a later librarian/curation pass.
 
 ### Synthesizer Carry-Through Deliverables
 The final synthesis must contain:
