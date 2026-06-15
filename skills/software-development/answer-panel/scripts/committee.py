@@ -55,7 +55,14 @@ def get_specialized_worker(profile: str, goal: str, priority: int) -> SwarmWorke
         "\n\nIMPORTANT: A pre-compiled context file `kos_context.md` will be generated in your workspace "
         "before you run by the librarian task. You MUST read this file first (using read_file / open-file inside "
         "your workspace directory) to ground your analysis in our existing Knowledge OS files, local databases, "
-        "and hindsight memories."
+        "and hindsight memories.\n\n"
+        "SOURCE TRACEABILITY REQUIREMENT: Your report must preserve provenance, not just conclusions. Include:\n"
+        "1. `## Source Ledger` table with Source ID, type, title/name, URL or local path, date/access date, why used, credibility notes.\n"
+        "2. `## Claim Register` table with Claim ID, claim, Source IDs, confidence, and caveats.\n"
+        "3. Stable IDs prefixed by your worker/profile, e.g. `worker-frontier1-S01` and `worker-frontier1-C03`.\n"
+        "4. Every material factual claim, number, ticker mapping, market-size estimate, replacement claim, and catalyst must cite one or more Source IDs.\n"
+        "5. Separate fact from inference. Cite facts directly; label inference and cite the facts it depends on.\n"
+        "6. If using `kos_context.md`, cite the original KOS path/section where visible; if provenance is incomplete, mark it `KOS excerpt — provenance incomplete`."
     )
 
     if profile == "scout":
@@ -267,7 +274,12 @@ def create_committee_swarm(
     verifier_body = (
         "Review every worker handoff and blackboard update. Gate the swarm: "
         "complete only with metadata {\"gate\": \"pass\"} when evidence is "
-        "sufficient; otherwise block with exact missing work."
+        "sufficient; otherwise block with exact missing work.\n\n"
+        "SOURCE AUDIT REQUIREMENT: You must evaluate worker credibility and source tracing. Include:\n"
+        "1. `## Source Credibility Audit` table with Source ID, Worker, Primary/secondary, Timeliness, Directness, Credibility verdict, Carry forward? (Y/N), Notes.\n"
+        "2. `## Unsupported or Weakly Supported Claims` table with Claim ID, Claim, Problem, Required fix.\n"
+        "3. Verify that key claims are tied to stable source IDs and that source paths or URLs are recoverable.\n"
+        "4. BLOCK the swarm if key claims lack source IDs, rely on unvetted model memory without sources, or source links are missing or non-recoverable."
         + context_suffix
     )
     verifier = kb.create_task(
@@ -287,7 +299,12 @@ def create_committee_swarm(
     # 6. Create synthesizer (depends on verifier)
     synthesizer_body = (
         "Synthesize the verified worker outputs into the final deliverable. "
-        "Do not start until the verifier has passed the gate."
+        "Do not start until the verifier has passed the gate.\n\n"
+        "SOURCE TRANSPARENCY REQUIREMENT: You must carry references and source IDs through key claims in the final synthesis.\n"
+        "1. Do not introduce new material factual claims without source IDs and references.\n"
+        "2. Do not include claims marked by the verifier as failed/unsupported unless explicitly highlighting them as disputed.\n"
+        "3. Include a `## References / Source Traceability` table at the end of the report representing: Final claim, Worker claim IDs, Source IDs, Original references (URLs/paths/citations).\n"
+        "4. Include inline citations to Source IDs (e.g. `[worker-frontier1-S01]`) for key factual points, numbers, and catalysts."
         + context_suffix
     )
     synthesizer = kb.create_task(

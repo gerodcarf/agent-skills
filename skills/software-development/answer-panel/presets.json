@@ -132,10 +132,11 @@
       "worker-cheap3",
       "worker-cheap4",
       "worker-frontier2",
-      "worker-frontier1"
+      "worker-frontier1",
+      "worker-frontier4"
     ],
     "judge": "analyst",
-    "description": "Default /committee: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash, GPT-5.5 (all medium reasoning)"
+    "description": "Default /committee: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash, GPT-5.5, Grok-4.3 (all medium reasoning)"
   },
   "committee_default": {
     "panel": [
@@ -143,9 +144,10 @@
       "worker-cheap3",
       "worker-cheap4",
       "worker-frontier2",
-      "worker-frontier1"
+      "worker-frontier1",
+      "worker-frontier4"
     ],
     "judge": "analyst",
-    "description": "Default /committee: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash, GPT-5.5 (all medium reasoning)"
+    "description": "Default /committee: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash, GPT-5.5, Grok-4.3 (all medium reasoning)"
   }
 }

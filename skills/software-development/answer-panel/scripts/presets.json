@@ -1,106 +1,152 @@
 {
-  "default": {
-    "panel": [
-      "gemini-cli/gemini-3.1-pro-preview",
-      "openrouter/x-ai/grok-4.3",
-      "openrouter/deepseek/deepseek-v4-pro"
-    ],
-    "judge": "orchestrator",
-    "description": "General-purpose reasoning — Gemini Pro + Grok + DeepSeek, orchestrator judge"
-  },
-  "budget": {
-    "panel": [
-      "openrouter/deepseek/deepseek-v4-flash",
-      "openrouter/qwen/qwen3.6-plus",
-      "openrouter/x-ai/grok-4.20"
-    ],
-    "judge": "clerk",
-    "description": "Cost-sensitive — budget models, clerk judge. ~half the cost of default"
-  },
-  "frontier": {
-    "panel": [
-      "openrouter/anthropic/claude-opus-4.7",
-      "codex/gpt-5.5-high",
-      "openrouter/x-ai/grok-4.3"
-    ],
-    "judge": "jumbo",
-    "description": "Max quality — frontier models only, jumbo judge"
-  },
-  "diverse": {
-    "panel": [
-      "openrouter/anthropic/claude-sonnet-4.5",
-      "gemini-cli/gemini-3.1-pro-preview",
-      "openrouter/x-ai/grok-4.3",
-      "openrouter/deepseek/deepseek-v4-pro",
-      "openrouter/qwen/qwen3.6-plus"
-    ],
-    "judge": "jumbo",
-    "description": "Max diversity — 5 models across 5 labs for hard problems"
-  },
-  "adversarial": {
-    "panel": [
-      "gemini-cli/gemini-3.1-pro-preview",
-      "openrouter/deepseek/deepseek-v4-pro",
-      "openrouter/x-ai/grok-4.3"
-    ],
-    "judge": "researcher",
-    "description": "Fact-checking / devil's advocate — researcher judge flags contradictions"
-  },
-  "swarm_frontier": {
-    "panel": [
-      "worker-frontier1",
-      "worker-frontier2",
-      "worker-frontier3",
-      "worker-frontier4"
-    ],
-    "judge": "analyst",
-    "description": "Kanban Swarm: 4 Frontier workers (GPT-5.5-medium, Gemini-3.5-Flash-medium, Claude-Opus-4.8, Grok-4.3)"
-  },
-  "swarm_cheap": {
-    "panel": [
-      "worker-cheap1",
-      "worker-cheap2",
-      "worker-cheap3",
-      "worker-cheap4"
-    ],
-    "judge": "analyst",
-    "description": "Kanban Swarm: 4 Budget workers (GLM-5.2, Mimo-v2.5-Pro, MiniMax-M3, DeepSeek-V4-Pro)"
-  },
-  "swarm_all": {
-    "panel": [
-      "worker-frontier1",
-      "worker-frontier2",
-      "worker-frontier3",
-      "worker-frontier4",
-      "worker-cheap1",
-      "worker-cheap2",
-      "worker-cheap3",
-      "worker-cheap4"
-    ],
-    "judge": "analyst",
-    "description": "Kanban Swarm: All 8 workers — 4 frontier + 4 cheap"
-  },
-  "definitive_power": {
-    "panel": [
-      "worker-frontier1",
-      "worker-frontier2",
-      "worker-frontier3",
-      "worker-frontier4",
-      "worker-cheap1",
-      "worker-cheap4"
-    ],
-    "judge": "analyst",
-    "description": "Definitive Power Swarm: 4 Frontier (GPT-5.5-medium, Gemini-3.5-flash-medium, Claude-Opus, Grok-4.3) + 2 Best Cheap (GLM-5.2, DeepSeek-V4-Pro)"
-  },
-  "swarm_default": {
-    "panel": [
-      "worker-cheap1",
-      "worker-cheap3",
-      "worker-cheap4",
-      "worker-frontier2",
-      "worker-frontier1"
-    ],
-    "judge": "analyst",
-    "description": "Default /swarm: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash, GPT-5.5 (all medium reasoning)"
-  }
+    "default": {
+        "panel": [
+            "gemini-cli/gemini-3.1-pro-preview",
+            "openrouter/x-ai/grok-4.3",
+            "openrouter/deepseek/deepseek-v4-pro"
+        ],
+        "judge": "orchestrator",
+        "description": "General-purpose reasoning \u2014 Gemini Pro + Grok + DeepSeek, orchestrator judge"
+    },
+    "budget": {
+        "panel": [
+            "openrouter/deepseek/deepseek-v4-flash",
+            "openrouter/qwen/qwen3.6-plus",
+            "openrouter/x-ai/grok-4.20"
+        ],
+        "judge": "clerk",
+        "description": "Cost-sensitive \u2014 budget models, clerk judge. ~half the cost of default"
+    },
+    "frontier": {
+        "panel": [
+            "openrouter/anthropic/claude-opus-4.7",
+            "codex/gpt-5.5-high",
+            "openrouter/x-ai/grok-4.3"
+        ],
+        "judge": "jumbo",
+        "description": "Max quality \u2014 frontier models only, jumbo judge"
+    },
+    "diverse": {
+        "panel": [
+            "openrouter/anthropic/claude-sonnet-4.5",
+            "gemini-cli/gemini-3.1-pro-preview",
+            "openrouter/x-ai/grok-4.3",
+            "openrouter/deepseek/deepseek-v4-pro",
+            "openrouter/qwen/qwen3.6-plus"
+        ],
+        "judge": "jumbo",
+        "description": "Max diversity \u2014 5 models across 5 labs for hard problems"
+    },
+    "adversarial": {
+        "panel": [
+            "gemini-cli/gemini-3.1-pro-preview",
+            "openrouter/deepseek/deepseek-v4-pro",
+            "openrouter/x-ai/grok-4.3"
+        ],
+        "judge": "researcher",
+        "description": "Fact-checking / devil's advocate \u2014 researcher judge flags contradictions"
+    },
+    "swarm_frontier": {
+        "panel": [
+            "worker-frontier1",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Swarm: 4 Frontier workers (GPT-5.5-medium, Gemini-3.5-Flash-medium, Claude-Opus-4.8, Grok-4.3)"
+    },
+    "swarm_cheap": {
+        "panel": [
+            "worker-cheap1",
+            "worker-cheap2",
+            "worker-cheap3",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Swarm: 4 Budget workers (GLM-5.2, Mimo-v2.5-Pro, MiniMax-M3, DeepSeek-V4-Pro)"
+    },
+    "swarm_all": {
+        "panel": [
+            "worker-frontier1",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4",
+            "worker-cheap1",
+            "worker-cheap2",
+            "worker-cheap3",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Swarm: All 8 workers \u2014 4 frontier + 4 cheap"
+    },
+    "definitive_power": {
+        "panel": [
+            "worker-frontier1",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4",
+            "worker-cheap1",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Definitive Power Swarm: 4 Frontier (GPT-5.5-medium, Gemini-3.5-flash-medium, Claude-Opus, Grok-4.3) + 2 Best Cheap (GLM-5.2, DeepSeek-V4-Pro)"
+    },
+    "swarm_default": {
+        "panel": [
+            "worker-cheap1",
+            "worker-cheap3",
+            "worker-cheap4",
+            "worker-frontier2",
+            "worker-frontier1"
+        ],
+        "judge": "analyst",
+        "description": "Default /swarm: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash, GPT-5.5 (all medium reasoning)"
+    },
+    "committee_frontier": {
+        "panel": [
+            "worker-frontier1",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Committee: 4 Frontier workers (GPT-5.5-medium, Gemini-3.5-Flash-medium, Claude-Opus-4.8, Grok-4.3)"
+    },
+    "committee_cheap": {
+        "panel": [
+            "worker-cheap1",
+            "worker-cheap2",
+            "worker-cheap3",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Committee: 4 Budget workers (GLM-5.2, Mimo-v2.5-Pro, MiniMax-M3, DeepSeek-V4-Pro)"
+    },
+    "committee_all": {
+        "panel": [
+            "worker-frontier1",
+            "worker-frontier2",
+            "worker-frontier3",
+            "worker-frontier4",
+            "worker-cheap1",
+            "worker-cheap2",
+            "worker-cheap3",
+            "worker-cheap4"
+        ],
+        "judge": "analyst",
+        "description": "Kanban Committee: All 8 workers \u2014 4 frontier + 4 cheap"
+    },
+    "committee_default": {
+        "panel": [
+            "worker-cheap1",
+            "worker-cheap3",
+            "worker-cheap4",
+            "worker-frontier2",
+            "worker-frontier1",
+            "worker-frontier4"
+        ],
+        "judge": "analyst",
+        "description": "Default /committee: GLM-5.2, MiniMax-M3, DeepSeek-V4-Pro, Gemini-3.5-flash, GPT-5.5, Grok-4.3 (all medium reasoning)"
+    }
 }
